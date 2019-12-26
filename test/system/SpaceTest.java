@@ -186,18 +186,56 @@ public class SpaceTest {
     }
 
     @Test
-    public void deallocCheck() {
+    public void deallocCheck() throws OutOfSpaceException {
+        Tree root =  new Tree("root");
+        RandomLeafCreation randomLeafCreation = allocRandomFiles(root);
+        HashMap<Leaf,Integer> files = randomLeafCreation.getFiles();
+        Space space = randomLeafCreation.getSpace();
+        Leaf [] allocs;
+        for(Map.Entry<Leaf,Integer> file : files.entrySet())
+        {
+            space.Dealloc(file.getKey());
+            allocs = space.getAlloc();
+            for(int j=0;j<allocs.length;j++)
+            {
+                assertTrue(allocs[j] != file.getKey());
+            }
+
+
+        }
+        FileSystem.fileStorage = null;
     }
     @Test
-    public void deallocCheckWhenEmpty() {
-    }
-    @Test
-    public void countFreeSpace() {
+    public void deallocCheckWhenEmpty() throws OutOfSpaceException {
+        int fileSize = rand.nextInt(BOUND);
+        Tree root =  new Tree("root");
+        int spaceSize = fileSize;
+        String fileName = "fileName";
+        FileSystem.fileStorage = new Space(spaceSize);
+        Space space = FileSystem.fileStorage;
+        Leaf leaf = new Leaf(fileName,fileSize);
+        leaf.parent = root;
+        assertEquals(0,space.countFreeSpace());
+        space.Dealloc(leaf);
+        assertEquals(spaceSize,space.countFreeSpace());
+        Leaf [] prev = space.getAlloc().clone();
+        space.Dealloc(leaf);
+        Leaf [] after = space.getAlloc().clone();
+        assertEquals(spaceSize,space.countFreeSpace());
+        assertEquals(spaceSize,space.countFreeSpace());
+        for(int i=0;i<prev.length;i++)
+        {
+            assertEquals(after[i],prev[i]);
+        }
+
+
+
+
+        FileSystem.fileStorage = null;
+
+
     }
 
-    @Test
-    public void getAlloc() {
-    }
     @After
     public void clean()
     {

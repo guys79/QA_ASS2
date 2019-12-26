@@ -1,8 +1,10 @@
 package system;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -79,10 +81,54 @@ public class TreeTest {
     }
     
     @Test
-    public void getChildByNameExistWhenLeaf()
-    {
-        // TODO: 26/12/2019  
+    public void getChildByNameExistWhenLeaf() throws OutOfSpaceException {
+        int fileSize = this.rand.nextInt(BOUND);
+        int spaceSize = fileSize + 1+ this.rand.nextInt(BOUND);
+        FileSystem.fileStorage = new Space(spaceSize);
+
+
+        //Number of children in test
+        int numOfChildren = rand.nextInt(BOUND);;
+
+        //Establishing name and size of the leaf
+        String name = "FileName";
+
+        //Creating tree
+        Tree tree = new Tree(name);
+        //Creting leaf
+        Leaf leaf = new Leaf(name,fileSize);
+
+        //Creating the list of children that we want to check
+        List<Node> childrenToCheck = new ArrayList<>();
+
+        //Creating children
+        for(int i=0;i<numOfChildren;i++)
+        {
+            childrenToCheck.add(new Tree(name+i));
+        }
+        childrenToCheck.add(leaf);
+
+        //Setting the children as the children of the tree
+        Node child;
+        for(int i=0;i<childrenToCheck.size();i++)
+        {
+            child = childrenToCheck.get(i);
+            tree.children.put(child.name,child);
+        }
+
+
+        //Searching for all of the children and assert the result
+        Node resChild;
+        for(int i=0;i<childrenToCheck.size();i++)
+        {
+            child = childrenToCheck.get(i);
+            resChild = tree.GetChildByName(child.name);
+            assertEquals(child,resChild);
+        }
+        FileSystem.fileStorage = null;
     }
+
+
     @Test
     /**
      * This function will check if the function 'getChildByName' works if the child exists
@@ -184,6 +230,12 @@ public class TreeTest {
             assertEquals(child,resChild);
         }
 
+    }
+
+    @After
+    public void clean()
+    {
+        FileSystem.fileStorage = null;
     }
 }
 
