@@ -27,7 +27,7 @@ public class NodeTest {
      */
     public void checkPath() {
         int depth = rand.nextInt(BOUND);
-        //Establishing name and size of the leaf
+        //Establishing name and size of the node
         String name = "UniqueNodeName";
 
         //Creating tree

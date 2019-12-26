@@ -1,6 +1,7 @@
 package system;
 
 import javafx.fxml.Initializable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,10 +27,10 @@ public class LeafTest {
     public void getName() {
         //Establishing name and size of the leaf
         String name = "LeafName";
-        int size = 1;
+        int size = rand.nextInt(BOUND);
 
         //Creating the FileSystem necessary for leaf to run
-        new FileSystem(size*2);
+        FileSystem.fileStorage = new Space(size+1);
 
         //Creating leaf legally
         Leaf leaf = null;
@@ -43,7 +44,7 @@ public class LeafTest {
         //Check if the name is the same
         assertEquals(leaf.name,name);
 
-
+        FileSystem.fileStorage = null;
 
     }
 
@@ -58,7 +59,7 @@ public class LeafTest {
 
 
         //Creating the FileSystem necessary for leaf to run
-        new FileSystem(size*2);
+        FileSystem.fileStorage = new Space(size+1);
 
         //Creating leaf legally
         Leaf leaf = null;
@@ -80,6 +81,7 @@ public class LeafTest {
             assertEquals(FileSystem.fileStorage.getAlloc()[memory],leaf);
         }
 
+        FileSystem.fileStorage = null;
 
 
     }
@@ -94,12 +96,12 @@ public class LeafTest {
         int size = this.rand.nextInt(BOUND);
 
         //Creating the FileSystem necessary for leaf to run
-        new FileSystem(size*2);
+        FileSystem.fileStorage = new Space(size+1);
 
         //Creating leaf ilegally (size bigger then limit)
         Leaf leaf = null;
         leaf = new Leaf(name,size*4);
-
+        FileSystem.fileStorage = null;
     }
 
     @Test
@@ -114,7 +116,7 @@ public class LeafTest {
         int size = this.rand.nextInt(BOUND);;
 
         //Creating the FileSystem necessary for leaf to run
-        new FileSystem(size+1);
+        FileSystem.fileStorage = new Space(size+1);
 
         //Creating leaf legally
         Leaf leaf = null;
@@ -156,7 +158,7 @@ public class LeafTest {
             assertEquals(trees.get(i).name,path[i]);
         }
         assertEquals(path[path.length-1],name);
-        
+        FileSystem.fileStorage = null;
     }
 
     // TODO: 26/12/2019 remove
@@ -168,10 +170,20 @@ public class LeafTest {
         }
     }
 
+    @Test (expected = NullPointerException.class)
+    public void prematureCreation() throws OutOfSpaceException {
+        int size = this.rand.nextInt(BOUND);
+        Leaf leaf = new Leaf("name",size);
+    }
 
 
     @Before
     public void initialize() {
         rand = new Random();
+    }
+    @After
+    public void clean()
+    {
+        FileSystem.fileStorage = null;
     }
 }

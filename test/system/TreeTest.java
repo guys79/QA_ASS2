@@ -17,9 +17,11 @@ public class TreeTest {
     private Random rand;//The random variable
     private final int BOUND = 100; //The maximal random number
 
+
     @Before
     public void initialize() {
         rand = new Random();
+
     }
 
     @Test
@@ -27,7 +29,7 @@ public class TreeTest {
      * This function will test if the name of the tree is the same as given
      */
     public void getName() {
-        //Establishing name and size of the leaf
+        //Establishing name and size of the tree
         String name = "TreeName";
 
         Tree tree = new Tree(name);
@@ -75,7 +77,12 @@ public class TreeTest {
         assertEquals(path[path.length - 1], name);
 
     }
-
+    
+    @Test
+    public void getChildByNameExistWhenLeaf()
+    {
+        // TODO: 26/12/2019  
+    }
     @Test
     /**
      * This function will check if the function 'getChildByName' works if the child exists
