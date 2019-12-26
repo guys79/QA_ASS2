@@ -8,7 +8,7 @@ import java.util.HashMap;
  * @author iain
  *
  */
-class Tree extends Node {
+public class Tree extends Node {
 
     /** The children of the current node */
     public HashMap<String, Node> children = new HashMap<String, Node>();

@@ -2,7 +2,7 @@ package system;
 
 import java.util.LinkedList;
 
-class Space {
+public class Space {
 
     private Leaf[] blocks;
     private LinkedList<Integer> freeBlocks;
@@ -35,8 +35,6 @@ class Space {
      */
     public void Alloc(int size, Leaf file) throws OutOfSpaceException {
 
-        /*if(size> freeBlocks.size())
-            throw  new OutOfSpaceException();*/
         file.allocations = new int[size];
 
         //we reached this point, therefore there is enough free space

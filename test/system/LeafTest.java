@@ -1,9 +1,14 @@
 package system;
 
+import javafx.fxml.Initializable;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.ResourceBundle;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +17,8 @@ import static org.junit.Assert.*;
  */
 public class LeafTest {
 
+    private Random rand;//The random variable
+    private final int BOUND = 100; //The maximal random number
     @Test
     /**
      * This function will test if the name of the leaf is the same as given
@@ -30,6 +37,8 @@ public class LeafTest {
             leaf = new Leaf(name,size);
         } catch (OutOfSpaceException e) {
             e.printStackTrace();
+            assertTrue(false);
+
         }
         //Check if the name is the same
         assertEquals(leaf.name,name);
@@ -45,7 +54,8 @@ public class LeafTest {
     public void sizeCheck() {
         //Establishing name and size of the leaf
         String name = "LeafName";
-        int size = 6;
+        int size = this.rand.nextInt(BOUND);
+
 
         //Creating the FileSystem necessary for leaf to run
         new FileSystem(size*2);
@@ -54,6 +64,8 @@ public class LeafTest {
         Leaf leaf = null;
         try {
             leaf = new Leaf(name,size);
+            // TODO: 13/12/2019 uncomment
+    //        assertEquals(size,leaf.size);
         } catch (OutOfSpaceException e) {
             e.printStackTrace();
         }
@@ -72,30 +84,21 @@ public class LeafTest {
 
     }
 
-    @Test
+    @Test(expected = OutOfSpaceException.class)
     /**
      * This function will check if the invalid creation of a leaf actually throws OutOfSpaceException
      */
-    public void invalidCreate()
-    {
+    public void invalidCreate() throws OutOfSpaceException {
         //Establishing name and size of the leaf
         String name = "LeafName";
-        int size = 1;
+        int size = this.rand.nextInt(BOUND);
 
         //Creating the FileSystem necessary for leaf to run
         new FileSystem(size*2);
 
         //Creating leaf ilegally (size bigger then limit)
         Leaf leaf = null;
-        boolean isRightException = false;
-        try {
-            leaf = new Leaf(name,size*4);
-        } catch (Exception e) {
-            //If the right exception was thrown
-            isRightException = e instanceof OutOfSpaceException;
-        }
-// TODO: 13/12/2019 uncomment
-//        assertTrue(isRightException);
+        leaf = new Leaf(name,size*4);
 
     }
 
@@ -105,13 +108,13 @@ public class LeafTest {
      */
     public void checkPath()
     {
-        int depth = 8;
+        int depth = this.rand.nextInt(BOUND);;
         //Establishing name and size of the leaf
         String name = "LeafName";
-        int size = 1;
+        int size = this.rand.nextInt(BOUND);;
 
         //Creating the FileSystem necessary for leaf to run
-        new FileSystem(size*2);
+        new FileSystem(size+1);
 
         //Creating leaf legally
         Leaf leaf = null;
@@ -129,31 +132,46 @@ public class LeafTest {
         List<Tree> trees = new ArrayList<>();
         for(int i=0;i<depth;i++)
         {
-            tree = new Tree(treeName+"i");
+            tree = new Tree(treeName+" "+i);
             //tree.children.put(prev.name,prev);
             prev.parent = tree;
             tree.depth = prev.depth - 1;
             prev = tree;
             if(prev instanceof Tree)
-                trees.add((Tree)prev);
+                trees.add(0,(Tree)prev);
         }
 
         //Getting the path
         String [] path = leaf.getPath();
+
+
+
         //Check path size
         assertEquals(path.length,depth+1);
 
         //Check path values
         for(int i=0;i<trees.size();i++)
         {
+
             assertEquals(trees.get(i).name,path[i]);
         }
         assertEquals(path[path.length-1],name);
         
     }
 
+    // TODO: 26/12/2019 remove
+    private void print(String [] arr)
+    {
+        for(int i=0;i<arr.length;i++)
+        {
+            System.out.println(arr[i]);
+        }
+    }
 
 
 
-
+    @Before
+    public void initialize() {
+        rand = new Random();
+    }
 }

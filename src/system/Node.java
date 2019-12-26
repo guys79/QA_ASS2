@@ -1,6 +1,6 @@
 package system;
 
-abstract class Node {
+public abstract class Node {
 
     /** Every node must have a name */
     String name;

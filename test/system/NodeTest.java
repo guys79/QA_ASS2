@@ -1,21 +1,32 @@
 package system;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 /**
  * This class will test the Node class
  */
 public class NodeTest {
+
+    private Random rand;//The random variable
+    private final int BOUND = 100; //The maximal random number
+
+    @Before
+    public void initialize() {
+        rand = new Random();
+    }
+
     @Test
     /**
      * This function will check of the path of the tree is correct
      */
     public void checkPath() {
-        int depth = 8;
+        int depth = rand.nextInt(BOUND);
         //Establishing name and size of the leaf
         String name = "UniqueNodeName";
 
@@ -29,13 +40,12 @@ public class NodeTest {
         String treeName = "treeName";
         List<Tree> trees = new ArrayList<>();
         for (int i = 0; i < depth; i++) {
-            tree = new Tree(treeName + "i");
-            //tree.children.put(prev.name,prev);
+            tree = new Tree(treeName + " "+i);
             prev.parent = tree;
             tree.depth = prev.depth - 1;
             prev = tree;
             if (prev instanceof Tree)
-                trees.add((Tree) prev);
+                trees.add(0,(Tree) prev);
         }
 
         //Getting the path
