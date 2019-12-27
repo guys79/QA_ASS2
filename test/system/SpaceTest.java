@@ -236,6 +236,32 @@ public class SpaceTest {
 
     }
 
+    @Test
+    public void allocAndDealloc() throws OutOfSpaceException {
+        int fileSize = rand.nextInt(100);
+        int spaceSize = fileSize+1;
+        System.out.printf("Space size is %d, File size is %d"  , spaceSize,fileSize);
+        Tree root = new Tree("root");
+        FileSystem.fileStorage = new Space(spaceSize);
+        Space space = FileSystem.fileStorage;
+        String name = "fileName";
+        Leaf file1 = new Leaf(name,fileSize);
+        file1.parent = root;
+        space.Dealloc(file1);
+        Leaf file2 = new Leaf(name+"2",fileSize);
+        file2.parent = root;
+        space.Dealloc(file1);
+
+        Leaf [] allocs = space.getAlloc();
+        int count =0;
+        for(int i=0;i<allocs.length;i++) {
+            if (allocs[i] == file2)
+                count++;
+        }
+        assertEquals(count,fileSize);
+        assertEquals(spaceSize-fileSize,space.countFreeSpace());
+    }
+
     @After
     public void clean()
     {
