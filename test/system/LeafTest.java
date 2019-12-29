@@ -65,8 +65,8 @@ public class LeafTest {
         Leaf leaf = null;
         try {
             leaf = new Leaf(name,size);
-            // TODO: 13/12/2019 uncomment
-    //        assertEquals(size,leaf.size);
+
+            assertEquals(size,leaf.size);
         } catch (OutOfSpaceException e) {
             e.printStackTrace();
         }

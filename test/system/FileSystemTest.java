@@ -49,6 +49,95 @@ public class FileSystemTest {
 
     }
 
+    @Test
+    public void checkDirDelete() throws BadFileNameException, DirectoryNotEmptyException {
+        int parents = rand.nextInt(BOUND);
+        int fileSize = rand.nextInt(this.BOUND);
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        path[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<path.length;i++)
+        {
+            path[i] = name + i;
+        }
+
+        fileSystem.dir(path);
+
+        fileSystem.rmdir(path);
+
+        Tree res = fileSystem.DirExists(path);
+        assertTrue(res == null);
+    }
+    @Test
+    public void checkDirDeleteWhenDiskEmpty() throws DirectoryNotEmptyException {
+        int parents = rand.nextInt(BOUND);
+        int fileSize = rand.nextInt(this.BOUND);
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        path[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<path.length;i++)
+        {
+            path[i] = name + i;
+        }
+
+        fileSystem.rmdir(path);
+
+        Tree res = fileSystem.DirExists(path);
+        assertTrue(res == null);
+    }
+
+    @Test(expected = DirectoryNotEmptyException.class)
+    public void checkDirDeletWhenHaveChild() throws BadFileNameException, DirectoryNotEmptyException {
+        int parents = rand.nextInt(BOUND);
+        int fileSize = rand.nextInt(this.BOUND);
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        String [] dirPath = new String[parents + 1];
+        path[0] = "root";
+        dirPath[0] = path[0];
+        String name = "dirname";
+        for(int i=1;i<path.length;i++)
+        {
+            path[i] = name + i;
+            dirPath[i] =path[i]; 
+        }
+
+        fileSystem.dir(path);
+        // TODO: 29/12/2019 Continue 
+        fileSystem.rmdir(path);
+
+        Tree res = fileSystem.DirExists(path);
+        assertTrue(res == null);
+    }
+    @Test
+    public void checkDirDeleteForNonExistedDir() throws BadFileNameException, DirectoryNotEmptyException {
+        int parents = rand.nextInt(BOUND);
+        int fileSize = rand.nextInt(this.BOUND);
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        path[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<path.length;i++)
+        {
+            path[i] = name + i;
+        }
+
+        fileSystem.dir(path);
+        String temp = path[1];
+        path[1] = "test";
+        fileSystem.rmdir(path);
+        path[1] = temp;
+        Tree res = fileSystem.DirExists(path);
+
+        assertTrue(res != null);
+        assertEquals(res.name,path[path.length-1]);
+    }
     private Node getRoot(FileSystem fileSystem) throws OutOfSpaceException, BadFileNameException {
 
         String [] path = new String[3];
@@ -384,12 +473,14 @@ public class FileSystemTest {
         String [] path = new String[parents + 1];
         String [] toDeletePath = new String[parents];
         path[0] = "root";
+        toDeletePath[0] = path[0];
         String name = "dirname";
         for(int i=1;i<path.length-1;i++)
         {
             path[i] = name + i;
-            toDeletePath[i-1] = path[i];
+            toDeletePath[i] = path[i];
         }
+        
         path[path.length-1] = "dirName";
         fileSystem.dir(path);
         fileSystem.rmfile(path);
@@ -423,7 +514,7 @@ public class FileSystemTest {
 
     }
     @Test
-    public void FileDoesNotExist() throws OutOfSpaceException, BadFileNameException {
+    public void fileDoesNotExist() throws OutOfSpaceException, BadFileNameException {
 
         int parents = rand.nextInt(BOUND);
         int fileSize = rand.nextInt(this.BOUND);
@@ -468,13 +559,67 @@ public class FileSystemTest {
 
 
     }
-    // TODO: 29/12/2019 Remove
-    private void print(String [] str)
-    {
-        for(int i=0;i<str.length;i++)
+    @Test
+    public void emptyDiskCheck(){
+        int spaceSize = this.rand.nextInt(BOUND) + 1;
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [][] blocks = fileSystem.disk();
+        for(int i=0;i<blocks.length;i++)
         {
-            System.out.println(str[i]);
+            assertTrue(blocks[i] == null);
         }
+    }
+    @Test
+    public void diskCheck() throws OutOfSpaceException, BadFileNameException {
+        int numberOfFiles = this.rand.nextInt(BOUND)+1;
+        int numOfFreeSpace = this.rand.nextInt(BOUND)+1;
+        int fileSize =  this.rand.nextInt(BOUND)+1;
+        int spaceSize = fileSize*numberOfFiles +numOfFreeSpace;
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        int parents;
+
+        Map<String,String []> namesToPaths = new HashMap<>();
+        String [] path;
+        String fileName = "fileName";
+        String dirName = "dirName";
+        for(int i=0;i<numberOfFiles;i++)
+        {
+            parents = rand.nextInt(BOUND) + 1;
+            path = new String[parents+2];
+            path[0]= "root";
+            for(int j=1;j<path.length-1;j++)
+            {
+                path[j] = dirName+"A"+i+"B"+j;
+            }
+            path[path.length-1] = fileName+i;
+
+            fileSystem.file(path,fileSize);
+
+            namesToPaths.put(path[path.length-1],path);
+        }
+
+        String [][] blocks = fileSystem.disk();
+        int countFree  = 0;
+        String [] actual;
+        for(int i=0;i<blocks.length;i++)
+        {
+            if(blocks[i]!=null)
+            {
+                actual = namesToPaths.get(blocks[i][blocks[i].length-1]);
+                assertEquals(actual.length,blocks[i].length);
+                //The path
+                for(int j=0;j<blocks[i].length;j++)
+                {
+                    assertEquals(blocks[i][j],actual[j]);
+                }
+            }
+            else
+            {
+                countFree++;
+            }
+        }
+        assertEquals(countFree,numOfFreeSpace);
+
     }
     @After
     public void clean()
