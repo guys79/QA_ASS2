@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.DirectoryNotEmptyException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -27,8 +25,8 @@ public class FileSystemTest {
     
     @Test
     public void normalDirCreation() throws OutOfSpaceException, BadFileNameException {
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -51,9 +49,9 @@ public class FileSystemTest {
 
     @Test
     public void checkDirDelete() throws BadFileNameException, DirectoryNotEmptyException {
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
-        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize + 1 + rand.nextInt(this.BOUND) + 1;
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
         path[0] = "root";
@@ -72,9 +70,9 @@ public class FileSystemTest {
     }
     @Test
     public void checkDirDeleteWhenDiskEmpty() throws DirectoryNotEmptyException {
-        int parents = rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND);
-        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        int spaceSize = fileSize + 1 + rand.nextInt(this.BOUND) + 1;
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
         path[0] = "root";
@@ -91,33 +89,37 @@ public class FileSystemTest {
     }
 
     @Test(expected = DirectoryNotEmptyException.class)
-    public void checkDirDeletWhenHaveChild() throws BadFileNameException, DirectoryNotEmptyException {
-        int parents = rand.nextInt(BOUND);
+    public void checkDirDeleteWithChild() throws BadFileNameException, DirectoryNotEmptyException, OutOfSpaceException {
+        int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND);
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
-        String [] path = new String[parents + 1];
-        String [] dirPath = new String[parents + 1];
+        String [] path = new String[parents + 2];
+
         path[0] = "root";
-        dirPath[0] = path[0];
         String name = "dirname";
-        for(int i=1;i<path.length;i++)
+        for(int i=1;i<path.length - 1;i++)
         {
             path[i] = name + i;
-            dirPath[i] =path[i]; 
         }
+        path[path.length-1] = "fileName";
 
-        fileSystem.dir(path);
-        // TODO: 29/12/2019 Continue 
-        fileSystem.rmdir(path);
 
+        fileSystem.file(path,fileSize);
+        int index = rand.nextInt(path.length-1);
+        String [] dirPath = new String[index+1];
+        for(int i=0;i<dirPath.length;i++)
+        {
+            dirPath[i] = path[i];
+        }
+        fileSystem.rmdir(dirPath);
         Tree res = fileSystem.DirExists(path);
-        assertTrue(res == null);
+        assertTrue(res != null);
     }
     @Test
     public void checkDirDeleteForNonExistedDir() throws BadFileNameException, DirectoryNotEmptyException {
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -164,8 +166,8 @@ public class FileSystemTest {
     }
     @Test
     public void dirExists() throws BadFileNameException, OutOfSpaceException {
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 2];
@@ -218,16 +220,16 @@ public class FileSystemTest {
     @Test
     public void creation()
     {
-        int spaceSize = rand.nextInt(BOUND);
+        int spaceSize = rand.nextInt(this.BOUND) + 1;
         FileSystem fileSystem = new FileSystem(spaceSize);
         assertEquals(FileSystem.fileStorage.countFreeSpace(),spaceSize);
     }
 
     @Test
     public void correctFile() throws OutOfSpaceException, BadFileNameException {
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
-        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize + 1 + rand.nextInt(this.BOUND) + 1;
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
         path[0] = "root";
@@ -278,8 +280,8 @@ public class FileSystemTest {
 
     @Test (expected = BadFileNameException.class)
     public void noRootFile() throws OutOfSpaceException, BadFileNameException {
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -296,8 +298,8 @@ public class FileSystemTest {
     @Test(expected = OutOfSpaceException.class)
     public void noSpaceNoFileToReplace() throws OutOfSpaceException, BadFileNameException {
 
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize - 1;
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -311,10 +313,174 @@ public class FileSystemTest {
         fileSystem.file(path,fileSize);
     }
 
+    @Test
+    public void normalLsDir() throws OutOfSpaceException, BadFileNameException {
+        int numOfFiles = 1 + rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize * numOfFiles + 1 + this.rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 2];
+        String [] dirPath = new String[parents + 1];
+        path[0] = "root";
+        dirPath[0] = "root";
+        String name = "dirname";
+        Set<String> names = new HashSet<>();
+        for(int i=1;i<path.length-1;i++)
+        {
+            path[i] = name + i;
+            dirPath[i] = path[i];
+        }
+        int coinFlip = 0;
+        for(int i= 0;i<numOfFiles;i++)
+        {
 
+            coinFlip = rand.nextInt(2);
+            if(coinFlip == 0) {
+                path[path.length - 1] = "filename" + i;
+                fileSystem.file(path, fileSize);
+
+            }
+            else
+            {
+                path[path.length - 1] = "dirname" + i;
+                fileSystem.dir(path);
+            }
+            names.add(path[path.length - 1]);
+        }
+
+        String [] res = fileSystem.lsdir(dirPath);
+        assertEquals(numOfFiles,res.length);
+        for(int i=0;i<res.length;i++)
+        {
+            assertTrue(names.contains(res[i]));
+        }
+
+    }
+    @Test
+    public void lsDirPathToFile() throws OutOfSpaceException, BadFileNameException {
+        int numOfFiles = 1 + rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize * numOfFiles + 1 + this.rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 2];
+        String [] dirPath = new String[parents + 1];
+        path[0] = "root";
+        dirPath[0] = "root";
+        String name = "dirname";
+        Set<String> names = new HashSet<>();
+        for(int i=1;i<path.length-1;i++)
+        {
+            path[i] = name + i;
+            dirPath[i] = path[i];
+        }
+        int coinFlip = 0;
+        for(int i= 0;i<numOfFiles-1;i++)
+        {
+
+            coinFlip = rand.nextInt(2);
+            if(coinFlip == 0) {
+                path[path.length - 1] = "filename" + i;
+                fileSystem.file(path, fileSize);
+
+            }
+            else
+            {
+                path[path.length - 1] = "dirname" + i;
+                fileSystem.dir(path);
+            }
+            names.add(path[path.length - 1]);
+        }
+        path[path.length - 1] = "filename" + (numOfFiles - 1);
+        fileSystem.file(path, fileSize);
+        String [] res = fileSystem.lsdir(path);
+        assertTrue(res == null);
+
+
+    }
+    @Test
+    public void lsDirAfterDelete() throws OutOfSpaceException, BadFileNameException, DirectoryNotEmptyException {
+        int numOfFiles = 1 + rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize * numOfFiles + 1 + this.rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 2];
+        String [] dirPath = new String[parents + 1];
+        path[0] = "root";
+        dirPath[0] = "root";
+        String name = "dirname";
+        Set<String> names = new HashSet<>();
+        for(int i=1;i<path.length-1;i++)
+        {
+            path[i] = name + i;
+            dirPath[i] = path[i];
+        }
+        int coinFlip = 0;
+        int index = rand.nextInt(numOfFiles);
+        String nameToDelete = "";
+        for(int i= 0;i<numOfFiles;i++)
+        {
+
+            coinFlip = rand.nextInt(2);
+            if(coinFlip == 0) {
+                path[path.length - 1] = "filename" + i;
+                fileSystem.file(path, fileSize);
+
+            }
+            else
+            {
+                path[path.length - 1] = "dirname" + i;
+                fileSystem.dir(path);
+            }
+            names.add(path[path.length - 1]);
+            if(index == i)
+            {
+                nameToDelete = path[path.length - 1];
+            }
+        }
+
+        path[path.length-1] = nameToDelete;
+        if(nameToDelete.contains("dir"))
+            fileSystem.rmdir(path);
+        else
+            fileSystem.rmfile(path);
+        String [] res = fileSystem.lsdir(dirPath);
+        assertEquals(numOfFiles - 1,res.length);
+        for(int i=0;i<res.length;i++)
+        {
+            assertTrue(names.contains(res[i]));
+        }
+
+    }
+    @Test
+    public void lsDirNoChildren() throws BadFileNameException {
+        int numOfFiles = 1 + rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize * numOfFiles + 1 + this.rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] dirPath = new String[parents + 1];
+        dirPath[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<dirPath.length;i++)
+        {
+
+            dirPath[i] = name + i;
+        }
+
+        fileSystem.dir(dirPath);
+
+        String [] res = fileSystem.lsdir(dirPath);
+        assertEquals(res.length,0);
+
+
+
+    }
     private void noSpaceExistFileToReplaceGeneric(int fileSize,int spaceSize) throws OutOfSpaceException, BadFileNameException {
 
-        int parents = rand.nextInt(BOUND);
+        int parents = rand.nextInt(BOUND) + 2;
         if(spaceSize == fileSize)
         {
             fileSize = 2;
@@ -344,7 +510,7 @@ public class FileSystemTest {
 
     @Test
     public void noSpaceExistFileToReplace() throws OutOfSpaceException, BadFileNameException {
-        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 2;
         int spaceSize = (int)(fileSize * 1.5);
         noSpaceExistFileToReplaceGeneric(fileSize,spaceSize);
     }
@@ -360,7 +526,7 @@ public class FileSystemTest {
     @Test(expected = OutOfSpaceException.class)
     public void noSpaceExistFileToReplaceButDirGiven() throws OutOfSpaceException, BadFileNameException {
 
-        int parents = rand.nextInt(BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = (int)(fileSize * 1.5);
         if(spaceSize == fileSize)
@@ -396,8 +562,8 @@ public class FileSystemTest {
     @Test
     public void normalFileDelete() throws OutOfSpaceException, BadFileNameException {
 
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -414,12 +580,31 @@ public class FileSystemTest {
         assertTrue(res == null);
 
     }
+    @Test
+    public void fileDeleteWhenEmpty() throws OutOfSpaceException, BadFileNameException {
 
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        path[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<path.length-1;i++)
+        {
+            path[i] = name + i;
+        }
+        path[path.length-1] = "fileName";
+        fileSystem.rmfile(path);
+        Leaf res = fileSystem.FileExists(path);
+        assertTrue(res == null);
+
+    }
     @Test
     public void nonExistFileDelete() {
 
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(this.BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -442,7 +627,7 @@ public class FileSystemTest {
     public void dirNameFileDelete() throws OutOfSpaceException, BadFileNameException, DirectoryNotEmptyException {
 
         int parents = rand.nextInt(BOUND)+2;
-        int fileSize = rand.nextInt(this.BOUND);
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -467,7 +652,7 @@ public class FileSystemTest {
     public void fileNameDirDelete() throws BadFileNameException {
 
         int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -494,8 +679,8 @@ public class FileSystemTest {
     @Test
     public void FileExists() throws OutOfSpaceException, BadFileNameException {
 
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -516,8 +701,8 @@ public class FileSystemTest {
     @Test
     public void fileDoesNotExist() throws OutOfSpaceException, BadFileNameException {
 
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND);
+        int parents = rand.nextInt(BOUND) + 1;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
@@ -539,7 +724,7 @@ public class FileSystemTest {
     public void fileDoesNotExistDirIs() throws OutOfSpaceException, BadFileNameException {
 
         int parents = rand.nextInt(BOUND) + 1;
-        int fileSize = rand.nextInt(this.BOUND);
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
