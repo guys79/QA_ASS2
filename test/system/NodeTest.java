@@ -26,7 +26,7 @@ public class NodeTest {
      * This function will check of the path of the tree is correct
      */
     public void checkPath() {
-        int depth = rand.nextInt(BOUND);
+        int depth = rand.nextInt(this.BOUND) + 1;
         //Establishing name and size of the node
         String name = "UniqueNodeName";
 

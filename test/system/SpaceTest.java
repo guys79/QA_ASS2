@@ -24,7 +24,7 @@ public class SpaceTest {
     @Test
     public void checkCreation()
     {
-        int size = rand.nextInt(BOUND);
+        int size = rand.nextInt(this.BOUND) + 1;
         Space space = new Space(size);
         assertEquals(size,space.countFreeSpace());
         Leaf [] blocks = space.getAlloc();
@@ -35,12 +35,12 @@ public class SpaceTest {
     @Test
     public void allocFreeSpace() throws OutOfSpaceException {
         //For a random number of iterations
-        int iter = rand.nextInt(BOUND);
+        int iter = rand.nextInt(this.BOUND) + 1;
         int [] sizes = new int[iter];
         int spaceSize =0;
         //Create random file sizes
         for(int k= 0;k<sizes.length;k++) {
-            sizes[k] = rand.nextInt(BOUND);
+            sizes[k] = rand.nextInt(this.BOUND) + 1;
             spaceSize+=sizes[k];
         }
         Leaf leaf;
@@ -64,12 +64,12 @@ public class SpaceTest {
     @Test
     public void allocCheck() throws OutOfSpaceException {
         //For a random number of iterations
-        int iter = rand.nextInt(BOUND);
+        int iter = rand.nextInt(this.BOUND) + 1;
         int [] sizes = new int[iter];
         int spaceSize =0;
         //Create random file sizes
         for(int k= 0;k<sizes.length;k++) {
-            sizes[k] = rand.nextInt(BOUND);
+            sizes[k] = rand.nextInt(this.BOUND) + 1;
             spaceSize+=sizes[k];
         }
         Leaf leaf;
@@ -100,7 +100,7 @@ public class SpaceTest {
     }
     @Test(expected = OutOfSpaceException.class)
     public void allocCheckWhenFull() throws OutOfSpaceException {
-        int fileSize = this.rand.nextInt(this.BOUND);
+        int fileSize = this.rand.nextInt(this.BOUND) + 1;
         int spaceSize = 2*fileSize - fileSize/2 -1;
         String fileName = "fileName";
        FileSystem.fileStorage = new Space(spaceSize);
@@ -132,13 +132,13 @@ public class SpaceTest {
     }
     private RandomLeafCreation allocRandomFiles() throws OutOfSpaceException {
         //For a random number of iterations
-        int iter = rand.nextInt(BOUND);
+        int iter = rand.nextInt(this.BOUND) + 1;
         int [] sizes = new int[iter];
         Leaf [] files = new Leaf[iter];
         int spaceSize =0;
         //Create random file sizes
         for(int k= 0;k<sizes.length;k++) {
-            sizes[k] = rand.nextInt(BOUND);
+            sizes[k] = rand.nextInt(this.BOUND) + 1;
             spaceSize+=sizes[k];
         }
         Leaf leaf;
@@ -207,7 +207,7 @@ public class SpaceTest {
     }
     @Test
     public void deallocCheckWhenEmpty() throws OutOfSpaceException {
-        int fileSize = rand.nextInt(BOUND);
+        int fileSize = rand.nextInt(this.BOUND) + 1;
         Tree root =  new Tree("root");
         int spaceSize = fileSize;
         String fileName = "fileName";

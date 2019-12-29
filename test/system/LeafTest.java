@@ -93,7 +93,7 @@ public class LeafTest {
     public void invalidCreate() throws OutOfSpaceException {
         //Establishing name and size of the leaf
         String name = "LeafName";
-        int size = this.rand.nextInt(BOUND);
+        int size = this.rand.nextInt(this.BOUND) + 1;
 
         //Creating the FileSystem necessary for leaf to run
         FileSystem.fileStorage = new Space(size+1);
@@ -110,10 +110,10 @@ public class LeafTest {
      */
     public void checkPath()
     {
-        int depth = this.rand.nextInt(BOUND);;
+        int depth = this.rand.nextInt(this.BOUND) + 1;
         //Establishing name and size of the leaf
         String name = "LeafName";
-        int size = this.rand.nextInt(BOUND);;
+        int size = this.rand.nextInt(this.BOUND) + 1;
 
         //Creating the FileSystem necessary for leaf to run
         FileSystem.fileStorage = new Space(size+1);
@@ -172,7 +172,7 @@ public class LeafTest {
 
     @Test (expected = NullPointerException.class)
     public void prematureCreation() throws OutOfSpaceException {
-        int size = this.rand.nextInt(BOUND);
+        int size = this.rand.nextInt(this.BOUND) + 1;
         Leaf leaf = new Leaf("name",size);
     }
 

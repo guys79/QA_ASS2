@@ -82,13 +82,13 @@ public class TreeTest {
     
     @Test
     public void getChildByNameExistWhenLeaf() throws OutOfSpaceException {
-        int fileSize = this.rand.nextInt(BOUND);
+        int fileSize = this.rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1+ this.rand.nextInt(BOUND);
         FileSystem.fileStorage = new Space(spaceSize);
 
 
         //Number of children in test
-        int numOfChildren = rand.nextInt(BOUND);;
+        int numOfChildren = rand.nextInt(this.BOUND) + 1;
 
         //Establishing name and size of the leaf
         String name = "FileName";
@@ -136,7 +136,7 @@ public class TreeTest {
     public void getChildByNameExist()
     {
         //Number of children in test
-        int numOfChildren = rand.nextInt(BOUND);;
+        int numOfChildren = rand.nextInt(this.BOUND) + 1;
 
         //Establishing name and size of the leaf
         String name = "TreeName";
@@ -183,7 +183,7 @@ public class TreeTest {
     public void getChildByNameNotExist()
     {
         //Number of children in test
-        int numOfChildren = rand.nextInt(BOUND);;
+        int numOfChildren = rand.nextInt(this.BOUND) + 1;
 
         //Establishing name and size of the leaf
         String name = "TreeName";
