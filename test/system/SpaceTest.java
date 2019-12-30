@@ -100,23 +100,27 @@ public class SpaceTest {
     }
     @Test(expected = OutOfSpaceException.class)
     public void allocCheckWhenFull() throws OutOfSpaceException {
-        int fileSize = this.rand.nextInt(this.BOUND) + 1;
-        int spaceSize = 2*fileSize - fileSize/2 -1;
-        String fileName = "fileName";
-       FileSystem.fileStorage = new Space(spaceSize);
-       Space space = FileSystem.fileStorage;
-        Leaf leaf;
-       try
-       {
-           leaf = new Leaf(fileName,fileSize);
-       }
-       catch (Exception e)
-       {
-           assertTrue(false);
-       }
+        try {
+            int fileSize = this.rand.nextInt(this.BOUND) + 1;
+            int spaceSize = 2 * fileSize - fileSize / 2 - 1;
+            String fileName = "fileName";
+            FileSystem.fileStorage = new Space(spaceSize);
+            Space space = FileSystem.fileStorage;
+            Leaf leaf;
+            try {
+                leaf = new Leaf(fileName, fileSize);
+            } catch (Exception e) {
+                assertTrue(false);
+            }
 
-       leaf = new Leaf(fileName,fileSize);
-
+            leaf = new Leaf(fileName, fileSize);
+        }
+        catch(Exception e)
+        {
+            if(e instanceof OutOfSpaceException)
+                throw e;
+            assertTrue(false);
+        }
 
 
     }

@@ -91,17 +91,26 @@ public class LeafTest {
      * This function will check if the invalid creation of a leaf actually throws OutOfSpaceException
      */
     public void invalidCreate() throws OutOfSpaceException {
-        //Establishing name and size of the leaf
-        String name = "LeafName";
-        int size = this.rand.nextInt(this.BOUND) + 1;
+        try {
+            //Establishing name and size of the leaf
+            String name = "LeafName";
+            int size = this.rand.nextInt(this.BOUND) + 1;
 
-        //Creating the FileSystem necessary for leaf to run
-        FileSystem.fileStorage = new Space(size+1);
+            //Creating the FileSystem necessary for leaf to run
+            FileSystem.fileStorage = new Space(size + 1);
 
-        //Creating leaf ilegally (size bigger then limit)
-        Leaf leaf = null;
-        leaf = new Leaf(name,size*4);
-        FileSystem.fileStorage = null;
+            //Creating leaf ilegally (size bigger then limit)
+            Leaf leaf = null;
+            leaf = new Leaf(name, size * 4);
+            FileSystem.fileStorage = null;
+        }
+        catch (Exception e)
+        {
+
+            if(e instanceof OutOfSpaceException)
+                throw e;
+            assertTrue(false);
+        }
     }
 
     @Test

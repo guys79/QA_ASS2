@@ -36,7 +36,8 @@ public class Space {
     public void Alloc(int size, Leaf file) throws OutOfSpaceException {
 
         file.allocations = new int[size];
-
+        if(freeBlocks.size()< size)
+            throw new OutOfSpaceException();
         //we reached this point, therefore there is enough free space
         for (int i = 0; i < size; i++) {
 

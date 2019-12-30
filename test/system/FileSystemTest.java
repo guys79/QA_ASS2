@@ -525,35 +525,40 @@ public class FileSystemTest {
     
     @Test(expected = OutOfSpaceException.class)
     public void noSpaceExistFileToReplaceButDirGiven() throws OutOfSpaceException, BadFileNameException {
+        try {
+            int parents = rand.nextInt(this.BOUND) + 1;
+            int fileSize = rand.nextInt(this.BOUND) + 1;
+            int spaceSize = (int) (fileSize * 1.5);
+            if (spaceSize == fileSize) {
+                fileSize = 2;
+                spaceSize = 3;
+            }
+            FileSystem fileSystem = new FileSystem(spaceSize);
+            String[] path = new String[parents + 1];
+            String[] secondPath = new String[path.length - 1];
+            path[0] = "root";
+            secondPath[0] = "root";
+            String name = "dirname";
+            for (int i = 1; i < path.length - 1; i++) {
+                path[i] = name + i;
+                secondPath[i] = path[i];
+            }
+            path[path.length - 1] = "fileName";
 
-        int parents = rand.nextInt(this.BOUND) + 1;
-        int fileSize = rand.nextInt(this.BOUND) + 1;
-        int spaceSize = (int)(fileSize * 1.5);
-        if(spaceSize == fileSize)
-        {
-            fileSize = 2;
-            spaceSize = 3;
+
+            fileSystem.file(path, fileSize);
+            Leaf firstLeaf = fileSystem.FileExists(path);
+            assertTrue(firstLeaf != null);
+
+
+            fileSystem.file(secondPath, fileSize);
         }
-        FileSystem fileSystem = new FileSystem(spaceSize);
-        String [] path = new String[parents + 1];
-        String [] secondPath = new String[path.length-1];
-        path[0] = "root";
-        secondPath[0] = "root";
-        String name = "dirname";
-        for(int i=1;i<path.length-1;i++)
+        catch (Exception e)
         {
-            path[i] = name + i;
-            secondPath[i] = path[i];
+            if(e instanceof OutOfSpaceException)
+                throw e;
+            assertTrue(false);
         }
-        path[path.length-1] = "fileName";
-
-
-        fileSystem.file(path,fileSize);
-        Leaf firstLeaf = fileSystem.FileExists(path);
-        assertTrue(firstLeaf!=null);
-
-
-        fileSystem.file(secondPath,fileSize);
 
 
 
@@ -650,28 +655,33 @@ public class FileSystemTest {
 
     @Test
     public void fileNameDirDelete() throws BadFileNameException {
+        try {
+            int parents = rand.nextInt(BOUND);
+            int fileSize = rand.nextInt(this.BOUND) + 1;
+            int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+            FileSystem fileSystem = new FileSystem(spaceSize);
+            String[] path = new String[parents + 1];
+            String[] toDeletePath = new String[parents];
+            path[0] = "root";
+            toDeletePath[0] = path[0];
+            String name = "dirname";
+            for (int i = 1; i < path.length - 1; i++) {
+                path[i] = name + i;
+                toDeletePath[i] = path[i];
+            }
 
-        int parents = rand.nextInt(BOUND);
-        int fileSize = rand.nextInt(this.BOUND) + 1;
-        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
-        FileSystem fileSystem = new FileSystem(spaceSize);
-        String [] path = new String[parents + 1];
-        String [] toDeletePath = new String[parents];
-        path[0] = "root";
-        toDeletePath[0] = path[0];
-        String name = "dirname";
-        for(int i=1;i<path.length-1;i++)
-        {
-            path[i] = name + i;
-            toDeletePath[i] = path[i];
+            path[path.length - 1] = "dirName";
+            fileSystem.dir(path);
+            fileSystem.rmfile(path);
+            Tree file = fileSystem.DirExists(path);
+            assertTrue(file != null);
+            assertEquals(file.name, path[path.length - 1]);
         }
-        
-        path[path.length-1] = "dirName";
-        fileSystem.dir(path);
-        fileSystem.rmfile(path);
-        Tree file = fileSystem.DirExists(path);
-        assertTrue(file!=null);
-        assertEquals(file.name,path[path.length-1]);
+        catch (Exception e)
+        {
+
+            assertTrue(false);
+        }
 
 
     }
@@ -722,25 +732,29 @@ public class FileSystemTest {
     }
     @Test
     public void fileDoesNotExistDirIs() throws OutOfSpaceException, BadFileNameException {
-
-        int parents = rand.nextInt(BOUND) + 1;
-        int fileSize = rand.nextInt(this.BOUND) + 1;
-        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
-        FileSystem fileSystem = new FileSystem(spaceSize);
-        String [] path = new String[parents + 1];
-        path[0] = "root";
-        path[1] = "test";
-        String name = "dirname";
-        for(int i=2;i<path.length-1;i++)
-        {
-            path[i] = name + i;
+        try {
+            int parents = rand.nextInt(BOUND) + 1;
+            int fileSize = rand.nextInt(this.BOUND) + 1;
+            int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+            FileSystem fileSystem = new FileSystem(spaceSize);
+            String[] path = new String[parents + 1];
+            path[0] = "root";
+            path[1] = "test";
+            String name = "dirname";
+            for (int i = 2; i < path.length - 1; i++) {
+                path[i] = name + i;
+            }
+            String[] newPath = new String[2];
+            fileSystem.file(path, fileSize);
+            newPath[0] = path[0];
+            newPath[1] = path[1];
+            Leaf res = fileSystem.FileExists(newPath);
+            assertEquals(res, null);
         }
-        String [] newPath = new String[2];
-        fileSystem.file(path,fileSize);
-        newPath[0] = path[0];
-        newPath[1] = path[1];
-        Leaf res = fileSystem.FileExists(newPath);
-        assertEquals(res,null);
+        catch (Exception e)
+        {
+            assertTrue(false);
+        }
 
 
     }

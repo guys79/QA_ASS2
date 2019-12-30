@@ -82,50 +82,53 @@ public class TreeTest {
     
     @Test
     public void getChildByNameExistWhenLeaf() throws OutOfSpaceException {
-        int fileSize = this.rand.nextInt(this.BOUND) + 1;
-        int spaceSize = fileSize + 1+ this.rand.nextInt(BOUND);
-        FileSystem.fileStorage = new Space(spaceSize);
+        try {
+            int fileSize = this.rand.nextInt(this.BOUND) + 1;
+            int spaceSize = fileSize + 1 + this.rand.nextInt(BOUND);
+            FileSystem.fileStorage = new Space(spaceSize);
 
 
-        //Number of children in test
-        int numOfChildren = rand.nextInt(this.BOUND) + 1;
+            //Number of children in test
+            int numOfChildren = rand.nextInt(this.BOUND) + 1;
 
-        //Establishing name and size of the leaf
-        String name = "FileName";
+            //Establishing name and size of the leaf
+            String name = "FileName";
 
-        //Creating tree
-        Tree tree = new Tree(name);
-        //Creting leaf
-        Leaf leaf = new Leaf(name,fileSize);
+            //Creating tree
+            Tree tree = new Tree(name);
+            //Creting leaf
+            Leaf leaf = new Leaf(name, fileSize);
 
-        //Creating the list of children that we want to check
-        List<Node> childrenToCheck = new ArrayList<>();
+            //Creating the list of children that we want to check
+            List<Node> childrenToCheck = new ArrayList<>();
 
-        //Creating children
-        for(int i=0;i<numOfChildren;i++)
-        {
-            childrenToCheck.add(new Tree(name+i));
+            //Creating children
+            for (int i = 0; i < numOfChildren; i++) {
+                childrenToCheck.add(new Tree(name + i));
+            }
+            childrenToCheck.add(leaf);
+
+            //Setting the children as the children of the tree
+            Node child;
+            for (int i = 0; i < childrenToCheck.size(); i++) {
+                child = childrenToCheck.get(i);
+                tree.children.put(child.name, child);
+            }
+
+
+            //Searching for all of the children and assert the result
+            Node resChild;
+            for (int i = 0; i < childrenToCheck.size(); i++) {
+                child = childrenToCheck.get(i);
+                resChild = tree.GetChildByName(child.name);
+                assertEquals(child, resChild);
+            }
+            FileSystem.fileStorage = null;
         }
-        childrenToCheck.add(leaf);
-
-        //Setting the children as the children of the tree
-        Node child;
-        for(int i=0;i<childrenToCheck.size();i++)
+        catch(Exception e)
         {
-            child = childrenToCheck.get(i);
-            tree.children.put(child.name,child);
+            assertTrue(false);
         }
-
-
-        //Searching for all of the children and assert the result
-        Node resChild;
-        for(int i=0;i<childrenToCheck.size();i++)
-        {
-            child = childrenToCheck.get(i);
-            resChild = tree.GetChildByName(child.name);
-            assertEquals(child,resChild);
-        }
-        FileSystem.fileStorage = null;
     }
 
 

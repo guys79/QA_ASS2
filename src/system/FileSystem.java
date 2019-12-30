@@ -257,7 +257,7 @@ public class FileSystem {
 
         Node found = PathExists(name);
 
-        if (found == null || found.getClass().getName() == "system.Node") {
+        if (found == null || found.getClass().getName() == "system.Tree") {
 
             return null;
 
