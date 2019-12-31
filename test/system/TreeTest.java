@@ -127,6 +127,7 @@ public class TreeTest {
         }
         catch(Exception e)
         {
+            e.printStackTrace();
             assertTrue(false);
         }
     }
@@ -214,7 +215,7 @@ public class TreeTest {
             //Check that the child is not in the array
             assertTrue(tree.children.get(cName) == null);
             //Get the child
-            child = tree.GetChildByName(cName);
+            child = (Tree)tree.GetChildByName(cName);
             //Check the depth of child
             assertEquals(child.depth,tree.depth+1);
             //Check child occurrence in map

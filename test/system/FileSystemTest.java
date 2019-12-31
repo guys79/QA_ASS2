@@ -22,9 +22,49 @@ public class FileSystemTest {
         this.rand = new Random();
     }
 
-    
     @Test
-    public void normalDirCreation() throws OutOfSpaceException, BadFileNameException {
+    public void creatingDirTwice() throws BadFileNameException{
+        // TODO: 30/12/2019 Remove
+        //int parents = rand.nextInt(this.BOUND) + 1;
+        int parents = 2;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        path[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<path.length;i++)
+        {
+            path[i] = name + i;
+        }
+
+
+        fileSystem.dir(path);
+        fileSystem.dir(path);
+
+    }
+    @Test(expected = BadFileNameException.class)
+    public void creatingDirAndThenFile() throws BadFileNameException, OutOfSpaceException {
+        // TODO: 30/12/2019 Remove
+        //int parents = rand.nextInt(this.BOUND) + 1;
+        int parents = 2;
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
+        FileSystem fileSystem = new FileSystem(spaceSize);
+        String [] path = new String[parents + 1];
+        path[0] = "root";
+        String name = "dirname";
+        for(int i=1;i<path.length;i++)
+        {
+            path[i] = name + i;
+        }
+
+
+        fileSystem.dir(path);
+        fileSystem.file(path,fileSize);
+    }
+    @Test
+    public void normalDirCreation() throws BadFileNameException {
         int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);

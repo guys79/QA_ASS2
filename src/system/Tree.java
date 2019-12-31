@@ -31,11 +31,11 @@ public class Tree extends Node {
      * @param name Name of child to search for.
      * @return system.Tree found (or created).
      */
-    public Tree GetChildByName(String name) {
+    public Node GetChildByName(String name) {
 
         if (this.children.containsKey(name)) {
 
-            return (Tree) this.children.get(name);
+            return this.children.get(name);
 
         }
 

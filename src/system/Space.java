@@ -57,9 +57,11 @@ public class Space {
 
         for (int i = 0; i < file.allocations.length; i++) {
 
-            blocks[file.allocations[i]] = null;
-            //record new free block
-            freeBlocks.add(file.allocations[i]);
+            if(blocks[file.allocations[i]] == file) {
+                blocks[file.allocations[i]] = null;
+                //record new free block
+                freeBlocks.add(file.allocations[i]);
+            }
 
         }
 

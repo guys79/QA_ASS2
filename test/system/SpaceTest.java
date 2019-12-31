@@ -226,7 +226,6 @@ public class SpaceTest {
         space.Dealloc(leaf);
         Leaf [] after = space.getAlloc().clone();
         assertEquals(spaceSize,space.countFreeSpace());
-        assertEquals(spaceSize,space.countFreeSpace());
         for(int i=0;i<prev.length;i++)
         {
             assertEquals(after[i],prev[i]);

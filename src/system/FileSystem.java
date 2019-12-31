@@ -53,7 +53,10 @@ public class FileSystem {
         //loop all the way, creating as we go down if necessary
         for (int i = 0; i < name.length; i++) {
 
-            workingTree = workingTree.GetChildByName(name[i]);
+            Node child = workingTree.GetChildByName(name[i]);
+            if(child instanceof Tree) {
+                workingTree = (Tree)child;
+            }
 
         }
 
@@ -75,7 +78,7 @@ public class FileSystem {
 
             if (elem == null) {
 
-                i++;
+                i--;
                 continue;
 
             } else {
@@ -126,10 +129,13 @@ public class FileSystem {
 
         }
 
+        Node child;
         //loop until level containing file
         for (int i = 0; i < name.length - 1; i++) {
 
-            workingTree = workingTree.GetChildByName(name[i]);
+            child =  workingTree.GetChildByName(name[i]);
+            if(child instanceof Tree)
+                workingTree = (Tree) child;
 
         }
 
