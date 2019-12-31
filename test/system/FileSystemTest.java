@@ -3,30 +3,37 @@ package system;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.File;
 import java.nio.file.DirectoryNotEmptyException;
 import java.util.*;
-
 import static org.junit.Assert.*;
 
+/**
+ * This class is responsible for testing the FileSystem class
+ */
 public class FileSystemTest {
 
-    private Random rand;
-    private final int BOUND = 100;
+    private Random rand;//The Random variable
+    private final int BOUND = 100;//The upper bound of the random variable
 
 
+
+    /**
+     * This function will initialize the Random variable
+     */
     @Before
     public void Initialization()
     {
         this.rand = new Random();
     }
 
+
+    /**
+     * This function check the behavior of the dir function when creating same dir twice
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void creatingDirTwice() throws BadFileNameException{
-        // TODO: 30/12/2019 Remove
-        //int parents = rand.nextInt(this.BOUND) + 1;
-        int parents = 2;
+        int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(BOUND);
         FileSystem fileSystem = new FileSystem(spaceSize);
@@ -38,12 +45,17 @@ public class FileSystemTest {
             path[i] = name + i;
         }
 
-
         fileSystem.dir(path);
         fileSystem.dir(path);
 
     }
 
+    /**
+     * This function will create a directory and then a file with the same path
+     * The function should throw BadFileNameException
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown - In the process of creating the files an OutOfSpaceException might be thrown
+     */
     @Test(expected = BadFileNameException.class)
     public void creatingDirAndThenFile() throws BadFileNameException, OutOfSpaceException {
 
@@ -64,6 +76,12 @@ public class FileSystemTest {
         fileSystem.file(path,fileSize);
     }
 
+    /**
+     * This function will create a file and then will crate a directory with the same path
+     * The function should throw BadFileNameException
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     */
     @Test(expected = BadFileNameException.class)
     public void creatingFileAndThenDir() throws BadFileNameException, OutOfSpaceException {
 
@@ -82,6 +100,11 @@ public class FileSystemTest {
         fileSystem.file(path,fileSize);
         fileSystem.dir(path);
     }
+
+    /**
+     * This function checks the behavior of a normal directory creation (dir function)
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void normalDirCreation() throws BadFileNameException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -96,16 +119,16 @@ public class FileSystemTest {
             path[i] = name + i;
         }
 
-
         fileSystem.dir(path);
-
         Tree dir = fileSystem.DirExists(path);
         assertTrue(dir!=null);
         assertEquals(dir.name,path[path.length-1]);
-
-
     }
 
+    /**
+     * This function will try to crate a directory with no "root" dir as the first directory in the path
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test(expected = BadFileNameException.class)
     public void noRootDirCreation() throws BadFileNameException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -119,10 +142,14 @@ public class FileSystemTest {
         {
             path[i] = name + i;
         }
-
-
         fileSystem.dir(path);
     }
+
+    /**
+     * This function will check a normal deletion case of a dir
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws DirectoryNotEmptyException - In the process of deleting directory, if the directory contains a child, a DirectoryNotEmptyException 
+     */
     @Test
     public void checkDirDelete() throws BadFileNameException, DirectoryNotEmptyException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -138,12 +165,15 @@ public class FileSystemTest {
         }
 
         fileSystem.dir(path);
-
         fileSystem.rmdir(path);
-
         Tree res = fileSystem.DirExists(path);
         assertTrue(res == null);
     }
+
+    /**
+     * This function will check the behavior of the deletion function when the disk is empty
+     * @throws DirectoryNotEmptyException - In the process of deleting directory, if the directory contains a child, a DirectoryNotEmptyException
+     */
     @Test
     public void checkDirDeleteWhenDiskEmpty() throws DirectoryNotEmptyException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -164,6 +194,13 @@ public class FileSystemTest {
         assertTrue(res == null);
     }
 
+    /**
+     * This function will check the deletion of a directory when it contains at least one child
+     * This function should throw DirectoryNotEmptyException
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws DirectoryNotEmptyException - In the process of deleting directory, if the directory contains a child, a DirectoryNotEmptyException
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     */
     @Test(expected = DirectoryNotEmptyException.class)
     public void checkDirDeleteWithChild() throws BadFileNameException, DirectoryNotEmptyException, OutOfSpaceException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -192,6 +229,12 @@ public class FileSystemTest {
         Tree res = fileSystem.DirExists(path);
         assertTrue(res != null);
     }
+
+    /**
+     * This function will check the behavior of a deletion of a directory that doesn't exist
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws DirectoryNotEmptyException - In the process of deleting directory, if the directory contains a child, a DirectoryNotEmptyException
+     */
     @Test
     public void checkDirDeleteForNonExistedDir() throws BadFileNameException, DirectoryNotEmptyException {
         int parents = rand.nextInt(BOUND) + 1;
@@ -216,6 +259,14 @@ public class FileSystemTest {
         assertTrue(res != null);
         assertEquals(res.name,path[path.length-1]);
     }
+
+    /**
+     * This function will return the root node in a given FileSystem
+     * @param fileSystem - The given FileSystem
+     * @return - The root Node of the FileSystem
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the file an BadFileNameException might be thrown
+     */
     private Node getRoot(FileSystem fileSystem) throws OutOfSpaceException, BadFileNameException {
 
         String [] path = new String[3];
@@ -240,6 +291,12 @@ public class FileSystemTest {
         return curr;
 
     }
+
+    /**
+     * This function will check the dirExists function (when the directory exists)
+     * @throws BadFileNameException
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     */
     @Test
     public void dirExists() throws BadFileNameException, OutOfSpaceException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -290,9 +347,9 @@ public class FileSystemTest {
 
     }
 
-
-
-
+    /**
+     * This function will check the creation of the class
+     */
     @Test
     public void creation()
     {
@@ -301,8 +358,14 @@ public class FileSystemTest {
         assertEquals(FileSystem.fileStorage.countFreeSpace(),spaceSize);
     }
 
+    /**
+     * This function will check a normal creation of a file (file function)
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void correctFile() throws OutOfSpaceException, BadFileNameException {
+        //Creating the file
         int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize + 1 + rand.nextInt(this.BOUND) + 1;
@@ -317,7 +380,7 @@ public class FileSystemTest {
         path[path.length-1] = "fileName";
         fileSystem.file(path,fileSize);
 
-
+        //Checking the allocations
         Space space = FileSystem.fileStorage;
         Leaf [] allocs = space.getAlloc();
         Leaf res = null;
@@ -328,6 +391,7 @@ public class FileSystemTest {
         }
         assertTrue(res!=null);
 
+        //Checking the path of the file
         String [] resPath = res.getPath();
         assertEquals(resPath.length,path.length);
         for(int i=0;i<path.length;i++)
@@ -335,6 +399,7 @@ public class FileSystemTest {
             assertEquals(resPath[i],path[i]);
         }
 
+        //Checking the given path
         Node parent = res;
         int index = path.length -1;
         while(parent!=null)
@@ -353,7 +418,12 @@ public class FileSystemTest {
         }
     }
 
-
+    /**
+     * This function will try to create a file with no root dir
+     * the function should throw BadFileNameException
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the files an BadFileNameException might be thrown
+     */
     @Test (expected = BadFileNameException.class)
     public void noRootFile() throws OutOfSpaceException, BadFileNameException {
         int parents = rand.nextInt(this.BOUND) + 1;
@@ -371,6 +441,12 @@ public class FileSystemTest {
         fileSystem.file(path,fileSize);
     }
 
+    /**
+     * This function checks the attempt to create a file when there is no space left (and no file to delete)
+     * The function should throw OutOfSpaceException
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the files an BadFileNameException might be thrown
+     */
     @Test(expected = OutOfSpaceException.class)
     public void noSpaceNoFileToReplace() throws OutOfSpaceException, BadFileNameException {
 
@@ -389,6 +465,11 @@ public class FileSystemTest {
         fileSystem.file(path,fileSize);
     }
 
+    /**
+     * This function will check a normal use of lsDir
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void normalLsDir() throws OutOfSpaceException, BadFileNameException {
         int numOfFiles = 1 + rand.nextInt(BOUND);
@@ -433,6 +514,12 @@ public class FileSystemTest {
         }
 
     }
+
+    /**
+     * This function will check the behavior of the lsDir function when the given path is to a file
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException
+     */
     @Test
     public void lsDirPathToFile() throws OutOfSpaceException, BadFileNameException {
         int numOfFiles = 1 + rand.nextInt(BOUND);
@@ -475,6 +562,13 @@ public class FileSystemTest {
 
 
     }
+
+    /**
+     * This function will check the behavior of lsDir before and after deletion
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws DirectoryNotEmptyException - In the process of deleting directory, if the directory contains a child, a DirectoryNotEmptyException
+     */
     @Test
     public void lsDirAfterDelete() throws OutOfSpaceException, BadFileNameException, DirectoryNotEmptyException {
         int numOfFiles = 1 + rand.nextInt(BOUND);
@@ -530,6 +624,11 @@ public class FileSystemTest {
         }
 
     }
+
+    /**
+     * This function will check the behavior of the lsDir function when there are no children
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void lsDirNoChildren() throws BadFileNameException {
         int numOfFiles = 1 + rand.nextInt(BOUND);
@@ -550,18 +649,18 @@ public class FileSystemTest {
 
         String [] res = fileSystem.lsdir(dirPath);
         assertEquals(res.length,0);
-
-
-
     }
+
+    /**
+     * This function will check the creation of a file when there is not enough space, but there is another file to replace him with
+     * @param fileSize - The size of the file
+     * @param spaceSize - The size of the FileSystem space
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     private void noSpaceExistFileToReplaceGeneric(int fileSize,int spaceSize) throws OutOfSpaceException, BadFileNameException {
 
         int parents = rand.nextInt(BOUND) + 2;
-        if(spaceSize == fileSize)
-        {
-            fileSize = 2;
-            spaceSize = 3;
-        }
         FileSystem fileSystem = new FileSystem(spaceSize);
         String [] path = new String[parents + 1];
         path[0] = "root";
@@ -584,21 +683,51 @@ public class FileSystemTest {
 
     }
 
+    /**
+     * This function checks the case when there is not enough space,
+     * And the space provided by deleting the existing file will allow the creation of the file
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void noSpaceExistFileToReplace() throws OutOfSpaceException, BadFileNameException {
         int fileSize = rand.nextInt(this.BOUND) + 2;
         int spaceSize = (int)(fileSize * 1.5);
         noSpaceExistFileToReplaceGeneric(fileSize,spaceSize);
     }
+
+    /**
+     * This function will check the creation of a file with the same path as another existing file
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
-    public void noSpaceExistFileToReplaceWithALotOfSpace() throws OutOfSpaceException, BadFileNameException {
+    public void existFileToReplaceWithALotOfSpace() throws OutOfSpaceException, BadFileNameException {
         int fileSize = rand.nextInt(this.BOUND) + 1;
         int spaceSize = fileSize * 10;
         noSpaceExistFileToReplaceGeneric(fileSize,spaceSize);
     }
-    
-    
-    
+
+    /**
+     * This function checks the case when there is not enough space (spaceSize = fileSize),
+     * And the space provided by deleting the existing file will allow the creation of the file
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
+    @Test
+    public void noSpaceExistFileSameSizeOfSpace() throws OutOfSpaceException, BadFileNameException {
+        int fileSize = rand.nextInt(this.BOUND) + 1;
+        int spaceSize = fileSize;
+        noSpaceExistFileToReplaceGeneric(fileSize,spaceSize);
+    }
+
+    /**
+     * This function will check the case where we want to create a file when there
+     * is not enough space, but a directory exists in that path (with the same name)
+     * This function should throw OutOfSpaceException
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test(expected = OutOfSpaceException.class)
     public void noSpaceExistFileToReplaceButDirGiven() throws OutOfSpaceException, BadFileNameException {
         try {
@@ -640,6 +769,12 @@ public class FileSystemTest {
 
 
     }
+
+    /**
+     * This function will check the normal creation of a directory
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void normalFileDelete() throws OutOfSpaceException, BadFileNameException {
 
@@ -661,8 +796,13 @@ public class FileSystemTest {
         assertTrue(res == null);
 
     }
+
+    /**
+     * This function will check the behavior of the FileSystem when deleting a file
+     * when the disk is empty
+     */
     @Test
-    public void fileDeleteWhenEmpty() throws OutOfSpaceException, BadFileNameException {
+    public void fileDeleteWhenEmpty() {
 
         int parents = rand.nextInt(this.BOUND) + 1;
         int fileSize = rand.nextInt(this.BOUND) + 1;
@@ -679,8 +819,11 @@ public class FileSystemTest {
         fileSystem.rmfile(path);
         Leaf res = fileSystem.FileExists(path);
         assertTrue(res == null);
-
     }
+
+    /**
+     * This function will check the behavior of deleting a file that doesn't exists
+     */
     @Test
     public void nonExistFileDelete() {
 
@@ -704,6 +847,12 @@ public class FileSystemTest {
 
     }
 
+    /**
+     * This function will check the behavior of directory deletion when file path is given
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     * @throws DirectoryNotEmptyException - In the process of deleting directory, if the directory contains a child, a DirectoryNotEmptyException
+     */
     @Test
     public void dirNameFileDelete() throws OutOfSpaceException, BadFileNameException, DirectoryNotEmptyException {
 
@@ -725,10 +874,11 @@ public class FileSystemTest {
         Leaf file = fileSystem.FileExists(path);
         assertTrue(file!=null);
         assertEquals(file.name,path[path.length-1]);
-
-
     }
 
+    /**
+     * This function will check the behavior of file deletion when directory path is given
+     */
     @Test
     public void fileNameDirDelete()  {
         try {
@@ -762,6 +912,11 @@ public class FileSystemTest {
 
     }
 
+    /**
+     * This function will check the FileExists function
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void FileExists() throws OutOfSpaceException, BadFileNameException {
 
@@ -781,9 +936,13 @@ public class FileSystemTest {
 
         Leaf res = fileSystem.FileExists(path);
         assertEquals(res.name,path[path.length-1]);
-
-
     }
+
+    /**
+     * This function will check the FileExists function when the file doesn't exists
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void fileDoesNotExist() throws OutOfSpaceException, BadFileNameException {
 
@@ -803,11 +962,13 @@ public class FileSystemTest {
         path[path.length-1] = "fileName2";
         Leaf res = fileSystem.FileExists(path);
         assertEquals(res,null);
-
-
     }
+
+    /**
+     * This function will check the FileExists function when the given path is of a directory
+     */
     @Test
-    public void fileDoesNotExistDirIs() throws OutOfSpaceException, BadFileNameException {
+    public void fileDoesNotExistDirIs() {
         try {
             int parents = rand.nextInt(BOUND) + 1;
             int fileSize = rand.nextInt(this.BOUND) + 1;
@@ -831,9 +992,11 @@ public class FileSystemTest {
         {
             assertTrue(false);
         }
-
-
     }
+
+    /**
+     * This function will check the disk when it's empty
+     */
     @Test
     public void emptyDiskCheck(){
         int spaceSize = this.rand.nextInt(BOUND) + 1;
@@ -845,6 +1008,11 @@ public class FileSystemTest {
         }
     }
 
+    /**
+     * This function will check the disk after creation and deletion of files and directories
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void checkDiskDeletionAndCreation() throws OutOfSpaceException, BadFileNameException {
         int fileSize1 = 3;
@@ -862,7 +1030,7 @@ public class FileSystemTest {
             path[i] = name + i;
         }
 
-        //Set<String> names = new HashSet<>();
+
         path[path.length-1] = "filename1";
         fileSystem.file(path,fileSize1);
         Leaf file1 = fileSystem.FileExists(path);
@@ -905,6 +1073,12 @@ public class FileSystemTest {
         }
     }
 
+    /**
+     * This function will return True IFF the number is in the array
+     * @param array - The given array
+     * @param num - The given number
+     * @return - True IFF the number is in the array
+     */
     private boolean findInArray(int [] array, int num)
     {
         for(int i=0;i<array.length;i++)
@@ -914,6 +1088,12 @@ public class FileSystemTest {
         }
         return false;
     }
+
+    /**
+     * This function will create number of files and will check the disk state
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
+     */
     @Test
     public void diskCheck() throws OutOfSpaceException, BadFileNameException {
         int numberOfFiles = this.rand.nextInt(BOUND)+1;
@@ -967,6 +1147,9 @@ public class FileSystemTest {
 
     }
     @After
+    /**
+     * This function will reset the space instance
+     */
     public void clean()
     {
         FileSystem.fileStorage = null;

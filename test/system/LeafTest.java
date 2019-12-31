@@ -20,10 +20,11 @@ public class LeafTest {
 
     private Random rand;//The random variable
     private final int BOUND = 100; //The maximal random number
-    @Test
+
     /**
      * This function will test if the name of the leaf is the same as given
      */
+    @Test
     public void getName() {
         //Establishing name and size of the leaf
         String name = "LeafName";
@@ -48,10 +49,11 @@ public class LeafTest {
 
     }
 
-    @Test
+
     /**
-     * This function will check if the allocat
+     * This function will check if the allocation procedure behaves the way ot should
      */
+    @Test
     public void sizeCheck() {
         //Establishing name and size of the leaf
         String name = "LeafName";
@@ -85,10 +87,12 @@ public class LeafTest {
 
     }
 
-    @Test(expected = OutOfSpaceException.class)
+
     /**
      * This function will check if the invalid creation of a leaf actually throws OutOfSpaceException
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
      */
+    @Test(expected = OutOfSpaceException.class)
     public void invalidCreate() throws OutOfSpaceException {
         try {
             //Establishing name and size of the leaf
@@ -112,10 +116,11 @@ public class LeafTest {
         }
     }
 
-    @Test
+
     /**
      * This function will check of the path of the leaf is correct
      */
+    @Test
     public void checkPath()
     {
         int depth = this.rand.nextInt(this.BOUND) + 1;
@@ -169,15 +174,11 @@ public class LeafTest {
         FileSystem.fileStorage = null;
     }
 
-    // TODO: 26/12/2019 remove
-    private void print(String [] arr)
-    {
-        for(int i=0;i<arr.length;i++)
-        {
-            System.out.println(arr[i]);
-        }
-    }
 
+    /**
+     * This function checks the creation of a leaf before the creation of the FileSystem
+     * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
+     */
     @Test (expected = NullPointerException.class)
     public void prematureCreation() throws OutOfSpaceException {
         int size = this.rand.nextInt(this.BOUND) + 1;
@@ -185,10 +186,19 @@ public class LeafTest {
     }
 
 
+
+    /**
+     * This function will initialize the Random variable
+     */
     @Before
     public void initialize() {
         rand = new Random();
     }
+
+
+    /**
+     * This function will reset the space instance
+     */
     @After
     public void clean()
     {

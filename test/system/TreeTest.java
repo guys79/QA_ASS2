@@ -19,17 +19,20 @@ public class TreeTest {
     private Random rand;//The random variable
     private final int BOUND = 100; //The maximal random number
 
-
+    /**
+     * This function will initialize the Random variable
+     */
     @Before
     public void initialize() {
         rand = new Random();
 
     }
 
-    @Test
+
     /**
      * This function will test if the name of the tree is the same as given
      */
+    @Test
     public void getName() {
         //Establishing name and size of the tree
         String name = "TreeName";
@@ -40,19 +43,20 @@ public class TreeTest {
     }
 
 
-    @Test
+
     /**
      * This function will check of the path of the tree is correct
      */
+    @Test
     public void checkPath() {
         int depth = rand.nextInt(BOUND);
-        //Establishing name and size of the leaf
+        //Establishing name and size of the Tree
         String name = "UniqueTreeName";
 
         //Creating tree
         Tree testedTree = new Tree(name);
 
-        //Creaing branch in size of 'depth'
+        //Creating branch in size of 'depth'
         Tree tree;
         Node prev = testedTree;
         testedTree.depth = depth + 1;
@@ -80,8 +84,12 @@ public class TreeTest {
 
     }
     
+
+    /**
+     * This function will test the getChildByName when the wanted child is a Leaf
+     */
     @Test
-    public void getChildByNameExistWhenLeaf() throws OutOfSpaceException {
+    public void getChildByNameExistWhenLeaf() {
         try {
             int fileSize = this.rand.nextInt(this.BOUND) + 1;
             int spaceSize = fileSize + 1 + this.rand.nextInt(BOUND);
@@ -96,7 +104,7 @@ public class TreeTest {
 
             //Creating tree
             Tree tree = new Tree(name);
-            //Creting leaf
+            //Creating leaf
             Leaf leaf = new Leaf(name, fileSize);
 
             //Creating the list of children that we want to check
@@ -127,16 +135,16 @@ public class TreeTest {
         }
         catch(Exception e)
         {
-            e.printStackTrace();
             assertTrue(false);
         }
     }
 
 
-    @Test
+
     /**
      * This function will check if the function 'getChildByName' works if the child exists
      */
+    @Test
     public void getChildByNameExist()
     {
         //Number of children in test
@@ -180,10 +188,11 @@ public class TreeTest {
     }
 
 
-    @Test
+
     /**
      * This function will check if the function 'getChildByName' works if the child doesn't exist (and it's properties)
      */
+    @Test
     public void getChildByNameNotExist()
     {
         //Number of children in test
@@ -236,6 +245,10 @@ public class TreeTest {
 
     }
 
+
+    /**
+     * This function will reset the space instance
+     */
     @After
     public void clean()
     {

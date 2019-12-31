@@ -16,15 +16,20 @@ public class NodeTest {
     private Random rand;//The random variable
     private final int BOUND = 100; //The maximal random number
 
+
+    /**
+     * This function will initialize the Random variable
+     */
     @Before
     public void initialize() {
         rand = new Random();
     }
 
-    @Test
+
     /**
      * This function will check of the path of the tree is correct
      */
+    @Test
     public void checkPath() {
         int depth = rand.nextInt(this.BOUND) + 1;
         //Establishing name and size of the node
@@ -33,7 +38,7 @@ public class NodeTest {
         //Creating tree
         Node testedTree = new Tree(name);
 
-        //Creaing branch in size of 'depth'
+        //Creating branch in size of 'depth'
         Tree tree;
         Node prev = testedTree;
         testedTree.depth = depth + 1;
