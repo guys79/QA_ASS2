@@ -78,7 +78,7 @@ public class FileSystem {
 
             if (elem == null) {
 
-                i--;
+                i++;
                 continue;
 
             } else {
@@ -121,7 +121,7 @@ public class FileSystem {
 
                 throw new OutOfSpaceException();
 
-            } else if (k <= (FileSystem.fileStorage.countFreeSpace() - file.allocations.length)) { //if there will be enough space free after deleting the old file, do it
+            } else if (k <= (FileSystem.fileStorage.countFreeSpace() + file.allocations.length)) { //if there will be enough space free after deleting the old file, do it
 
                 rmfile(name);
 
@@ -148,8 +148,7 @@ public class FileSystem {
 
             }
 
-            //enough space free, remove old file
-            rmfile(name);
+
 
         }
 
