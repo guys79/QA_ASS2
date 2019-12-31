@@ -839,7 +839,7 @@ public class FileSystemTest {
 
         String [][] blocks = fileSystem.disk();
         int countFree  = 0;
-        String [] actual;
+        String [] actual;//
         for(int i=0;i<blocks.length;i++)
         {
             if(blocks[i]!=null)
