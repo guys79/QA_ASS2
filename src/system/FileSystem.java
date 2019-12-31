@@ -12,7 +12,7 @@ public class FileSystem {
 
     private Tree fileSystemTree;
 
-    /** Stores file->block allocations */
+    // Stores file->block allocations
     public static Space fileStorage;
 
     /**

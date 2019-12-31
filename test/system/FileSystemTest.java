@@ -294,7 +294,7 @@ public class FileSystemTest {
 
     /**
      * This function will check the dirExists function (when the directory exists)
-     * @throws BadFileNameException
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
      * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
      */
     @Test
@@ -518,7 +518,7 @@ public class FileSystemTest {
     /**
      * This function will check the behavior of the lsDir function when the given path is to a file
      * @throws OutOfSpaceException - In the process of creating the files an OutOfSpaceException might be thrown
-     * @throws BadFileNameException
+     * @throws BadFileNameException - In the process of creating the directories an BadFileNameException might be thrown
      */
     @Test
     public void lsDirPathToFile() throws OutOfSpaceException, BadFileNameException {

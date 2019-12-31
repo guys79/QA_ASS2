@@ -9,7 +9,7 @@ public class Space {
 
     /**
      * Ctor - create \c size blank filesystem blocks.
-     * @param size
+     * @param size - The size of the space
      */
     public Space(int size) {
 
